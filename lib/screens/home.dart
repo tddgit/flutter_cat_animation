@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cat_animation/widgets/cat.dart';
@@ -12,12 +14,33 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   /// Describes type of animation of the Cat
   Animation<double>? catAnimation;
 
-  /// Controller for animation
+  /// Controller for animation of the Cat
   AnimationController? catController;
+
+  /// Describes type of animation of the Box
+  Animation<double>? boxAnimation;
+
+  /// Controller for animation of the Box
+  AnimationController? boxController;
 
   @override
   void initState() {
     super.initState();
+
+    boxController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    );
+
+    boxAnimation = Tween<double>(
+      begin: 0,
+      end: 3.14,
+    ).animate(
+      CurvedAnimation(
+        parent: boxController!,
+        curve: Curves.linear,
+      ),
+    );
 
     catController = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -54,11 +77,20 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     );
   }
 
+  /// Return rotated on 120 degrees left flap of box
   Widget buildLeftFlap() {
-    return Container(
-      height: 10,
-      width: 125,
-      color: Colors.red,
+    return Positioned(
+      left: 3,
+      top: 3,
+      child: Transform.rotate(
+        angle: pi / 2 + pi / 12,
+        alignment: Alignment.topLeft,
+        child: Container(
+          height: 10,
+          width: 125,
+          color: Colors.brown,
+        ),
+      ),
     );
   }
 
@@ -96,6 +128,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     }
   }
 
+  //============================DEBUG SECTION================================
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -103,6 +136,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       ..add(
           DiagnosticsProperty<Animation<double>>('catAnimation', catAnimation))
       ..add(DiagnosticsProperty<AnimationController>(
-          'catController', catController));
+          'catController', catController))
+      ..add(
+          DiagnosticsProperty<Animation<double>?>('boxAnimation', boxAnimation))
+      ..add(DiagnosticsProperty<AnimationController?>(
+          'boxController', boxController));
   }
 }
